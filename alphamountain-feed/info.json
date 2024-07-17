@@ -1,0 +1,267 @@
+{
+  "name": "alphamountain-feed",
+  "label": "alphaMountain Feed",
+  "version": "1.0.0",
+  "category": "Threat Intelligence",
+  "description": "The AlphaMountain feed connector facilitates seamless integration with AlphaMountain's data sources, providing access to real-time and historical data on domain popularity, cybersecurity insights, risk scores and relevant content categorization and more.",
+  "cs_approved": false,
+  "cs_compatible": true,
+  "publisher": "Fortinet",
+  "icon_small_name": "small.png",
+  "icon_large_name": "large.png",
+  "help_online": "",
+  "ingestion_supported": true,
+  "ingestion_modes": [
+    "scheduled"
+  ],
+  "tags": [
+    "ThreatIntel"
+  ],
+  "ingestion_preferences": {
+    "modules": [
+      "threat_intel_feeds",
+      "indicators"
+    ]
+  },
+  "configuration": {
+    "fields": [
+      {
+        "title": "Server URL",
+        "name": "server_url",
+        "type": "text",
+        "description": "Specify the Rest API feed endpoint URL of the alphaMountain server to connect and perform automated operations.",
+        "tooltip": "Specify the Rest API feed endpoint URL of the alphaMountain server to connect and perform automated operations.",
+        "required": true,
+        "visible": true,
+        "editable": true,
+        "value": "https://batch.alphamountain.ai"
+      },
+      {
+        "title": "API Key",
+        "name": "api_key",
+        "type": "text",
+        "tooltip": "Specify the API key to access the alphaMountain Rest API feed endpoint to which you will connect and perform the automated operations.",
+        "description": "Specify the API key to access the alphaMountain Rest API feed endpoint to which you will connect and perform the automated operations.",
+        "required": false,
+        "visible": true,
+        "editable": true
+      },
+      {
+        "title": "Verify SSL",
+        "name": "verify_ssl",
+        "type": "checkbox",
+        "description": "Specifies whether the SSL certificate for the server is to be verified. By default, this option is set to True.",
+        "tooltip": "Specifies whether the SSL certificate for the server is to be verified. By default, this option is set to True.",
+        "required": false,
+        "editable": true,
+        "visible": true,
+        "value": true
+      }
+    ]
+  },
+  "operations": [
+    {
+      "title": "Get Indicators",
+      "operation": "get_indicators",
+      "description": "Retrieves a list of all indicators from alphaMountain Feed. You can also filter the indicators retrieved from alphaMountain Feed based on the filter you have specified",
+      "category": "investigation",
+      "annotation": "get_indicators",
+      "output_schema": {},
+      "parameters": [
+        {
+          "title": "Start Date",
+          "name": "start",
+          "type": "datetime",
+          "description": "Specify the date time for the beginning of the feed record to fetch. Due to internal synchronization between servers, recent record timestamps may be delayed by up to six hours and thus the latest timestamp used should be now() - '6 hours'",
+          "tooltip": "Specify the date time for the beginning of the feed record to fetch. Due to internal synchronization between servers, recent record timestamps may be delayed by up to six hours and thus the latest timestamp used should be now() - '6 hours'",
+          "visible": true,
+          "required": false,
+          "editable": true
+        },
+        {
+          "title": "Flags",
+          "name": "flags",
+          "type": "multiselect",
+          "description": "Specify the list of flags to exclude certain types of entries from the results. Possible values include \"Exclude IP\",\"Exclude Host\",\"Exclude Path\",\"Exclude Dead\".",
+          "tooltip": "Specify the list of flags to exclude certain types of entries from the results. Possible values include \"Exclude IP\",\"Exclude Host\",\"Exclude Path\",\"Exclude Dead\".",
+          "visible": true,
+          "required": false,
+          "editable": true,
+          "options": [
+            "Exclude IP",
+            "Exclude Host",
+            "Exclude Path",
+            "Exclude Dead"
+          ]
+        },
+        {
+          "title": "Minimum Risk",
+          "name": "risk_min",
+          "type": "integer",
+          "description": "Specify a minimum risk score to include in the feed. Defaults to license entitlements",
+          "tooltip": "Specify a minimum risk score to include in the feed. Defaults to license entitlements",
+          "visible": true,
+          "required": false,
+          "editable": true
+        },
+        {
+          "title": "Maximum Risk",
+          "name": "risk_min",
+          "type": "integer",
+          "description": "Specify a maximum risk score to include in the feed. Defaults to license entitlements",
+          "tooltip": "Specify a maximum risk score to include in the feed. Defaults to license entitlements",
+          "visible": true,
+          "required": false,
+          "editable": true
+        },
+        {
+          "title": "Include Categories",
+          "name": "include_categories",
+          "type": "checkbox",
+          "description": "If you check this option, it will fetch newly classified and revalidated categorizations for retrieved feed indicators.",
+          "tooltip": "If you check this option, it will fetch newly classified and revalidated categorizations for retrieved feed indicators",
+          "visible": true,
+          "required": false,
+          "editable": true,
+          "onchange": {
+            "true": [
+              {
+                "title": "Categories",
+                "name": "categories",
+                "type": "multiselect",
+                "description": "Specify a only list of categories to include in the returned feed. Defaults to license entitlements",
+                "tooltip": "Specify a only list of categories to include in the returned feed. Defaults to license entitlements",
+                "visible": true,
+                "required": false,
+                "editable": true,
+                "options": [
+                  "Unrated",
+                  "Abortion",
+                  "Chat/IM/SMS",
+                  "Child Pornography/Abuse",
+                  "Content Servers",
+                  "Dating/Personals",
+                  "Digital Postcards",
+                  "Drugs/Controlled Substances",
+                  "Education",
+                  "Email",
+                  "Entertainment",
+                  "Extreme/Gruesome",
+                  "Ads/Analytics",
+                  "File Sharing/Storage",
+                  "Finance",
+                  "For Kids",
+                  "Forums",
+                  "Gambling",
+                  "Games",
+                  "Government/Legal",
+                  "Hacking",
+                  "Hate/Discrimination",
+                  "Health",
+                  "Adult/Mature",
+                  "Hobbies/Recreation",
+                  "Hosting",
+                  "Humor/Comics",
+                  "Alternative Ideology",
+                  "Information Technology",
+                  "Information/Computer Security",
+                  "Infrastructure/IOT",
+                  "Job Search",
+                  "Lingerie/Swimsuit",
+                  "Malicious",
+                  "Alcohol",
+                  "Marijuana",
+                  "Marketing/Merchandising",
+                  "Media Sharing",
+                  "Military",
+                  "Mixed Content/Potentially Adult",
+                  "News",
+                  "Non-Profit/Advocacy",
+                  "Nudity",
+                  "Parked Site",
+                  "Peer-to-Peer (P2P)",
+                  "Arts/Culture",
+                  "Personal Sites/Blogs",
+                  "Phishing",
+                  "Piracy/Plagiarism",
+                  "Politics/Opinion",
+                  "Pornography",
+                  "Potentially Unwanted Programs",
+                  "Productivity Applications",
+                  "Anonymizers",
+                  "Real Estate",
+                  "Reference",
+                  "Auctions/Classifieds",
+                  "Religion",
+                  "Remote Access",
+                  "Restaurants/Food",
+                  "Scam/Illegal/Unethical",
+                  "Search Engines/Portals",
+                  "Sex Education",
+                  "Shopping",
+                  "Social Networking",
+                  "Society/Lifestyles",
+                  "Software Downloads",
+                  "Audio",
+                  "Spam",
+                  "Sports",
+                  "Suspicious",
+                  "Telephony",
+                  "Tobacco",
+                  "Translation",
+                  "Travel",
+                  "URL Redirect",
+                  "Vehicles",
+                  "Video/Multimedia",
+                  "Brokerage/Trading",
+                  "Violence",
+                  "Virtual Meetings",
+                  "Weapons",
+                  "AI/ML Applications",
+                  "Alternative Currency",
+                  "Dynamic DNS",
+                  "Login/Verification",
+                  "Newly Registered Domains",
+                  "Promotional Compensation",
+                  "Business/Economy"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Include Popularity",
+          "name": "include_popularity",
+          "type": "checkbox",
+          "description": "If you check this option, it will fetch host popularity rankings for retrieved feed indicators.",
+          "tooltip": "If you check this option, it will fetch host popularity rankings for retrieved feed indicators",
+          "visible": true,
+          "required": false,
+          "editable": true
+        },
+        {
+          "title": "Limit",
+          "name": "limit",
+          "type": "integer",
+          "description": "Specify a limit on the number of records returned. Defaults to license entitlements",
+          "tooltip": "Specify a limit on the number of records returned. Defaults to license entitlements",
+          "visible": true,
+          "required": false,
+          "editable": true
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "title": "Get Available Categories",
+      "operation": "get_available_category",
+      "description": "Retrieves a list of all available categories for urls",
+      "category": "investigation",
+      "annotation": "get_indicators",
+      "output_schema": {},
+      "parameters": [],
+      "enabled": true,
+      "visible": false
+    }
+  ]
+}

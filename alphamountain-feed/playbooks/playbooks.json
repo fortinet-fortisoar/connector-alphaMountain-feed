@@ -1,0 +1,628 @@
+{
+  "type": "workflow_collections",
+  "data": [
+    {
+      "@type": "WorkflowCollection",
+      "name": "Sample - alphaMountain Feed - 1.0.0",
+      "description": "Sample playbooks for \"alphaMountain\" connector. If you are planning to use any of the sample playbooks in your environment, ensure that you clone those playbooks and move them to a different collection, since the sample playbook collection gets deleted during connector upgrade and delete.",
+      "visible": true,
+      "image": null,
+      "uuid": "136023c2-bf56-4463-98b5-ad4df21d3ed7",
+      "id": 523,
+      "deletedAt": null,
+      "importedBy": [],
+      "recordTags": [
+        "alphamountain"
+      ],
+      "workflows": [
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "> alphaMountain Feed > Fetch and Create",
+          "aliasName": null,
+          "tag": null,
+          "description": "Fetch and Create Indicators from alphaMountain Feed",
+          "isActive": false,
+          "debug": false,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [],
+          "synchronous": false,
+          "lastModifyDate": 1721131235,
+          "collection": "/api/3/workflow_collections/136023c2-bf56-4463-98b5-ad4df21d3ed7",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/044bf43e-cbc7-43be-98c3-b84c930d9a38",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "Configuration",
+              "description": null,
+              "arguments": {
+                "tlp": "Red",
+                "tlp_map": "{'Red': {{'TrafficLightProtocol'| picklist('Red') }}, 'Amber': {{'TrafficLightProtocol'| picklist('Amber') }}, 'Green': {{'TrafficLightProtocol'| picklist('Green') }}, 'White': {{'TrafficLightProtocol'| picklist('White') }}}",
+                "confidence": "5",
+                "reputation": "Suspicious",
+                "last_x_minutes": "60",
+                "reputation_map": "{'Good': {{'IndicatorReputation'| picklist('Good') }}, 'Malicious': {{'IndicatorReputation'| picklist('Malicious') }}, 'Suspicious': {{'IndicatorReputation'| picklist('Suspicious') }}, 'TBD': {{'IndicatorReputation'| picklist('TBD') }}, 'No Reputation Available': {{'IndicatorReputation' | picklist('No Reputation Available') }}}",
+                "typeOfFeed_map": "{'domain-name':{{'ThreatIntelFeedType' | picklist('Domain')}},'url':{{'ThreatIntelFeedType' | picklist('URL')}},'ipv4-addr':{{'ThreatIntelFeedType' | picklist('IP Address')}}, 'file': {{'ThreatIntelFeedType' | picklist('FileHash-MD5')}}}",
+                "threat_intel_feeds_tlp_map": "{}",
+                "threat_intel_feeds_reputation_map": "{}",
+                "threat_intel_feeds_typeOfFeed_map": "{}"
+              },
+              "status": null,
+              "top": "160",
+              "left": "300",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "group": null,
+              "uuid": "b4dd4d80-c9a2-425b-b1a8-39a29b007fb7"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Create Record",
+              "description": null,
+              "arguments": {
+                "for_each": {
+                  "item": "{{vars.steps.Fetch_Indicators.data.get('data', [])}}",
+                  "__bulk": true,
+                  "parallel": false,
+                  "condition": "",
+                  "batch_size": 100
+                },
+                "resource": {
+                  "tLP": "{{vars.tlp_resolved}}",
+                  "value": "{{vars.item.file_name}} : {{vars.item.sha256_hash}}",
+                  "source": "alphaMountain Feed",
+                  "lastSeen": "{{arrow.get(vars.item[\"last_seen\"]).int_timestamp if vars.item[\"last_seen\"] else None}}",
+                  "sourceId": "{{vars.item.sha256_hash}}",
+                  "__replace": "",
+                  "confidence": "{% if vars.confidence %}{{ vars.confidence }}{% else %}None{% endif %}",
+                  "recordTags": "{{vars.item.tags}}",
+                  "reputation": "{{vars.reputation_resolved}}",
+                  "sourceData": "{{vars.item | toJSON}}",
+                  "typeOfFeed": "/api/3/picklists/8c88bc82-c803-4cba-9997-4d734123493b",
+                  "description": "<p>A Locality Sensitive Hash (TLSH): {{vars.item.tlsh}}</p>\n<p>SSDEEP Hash: {{vars.item.ssdeep}}</p>\n<p>MD5 Hash: {{vars.item.md5_hash}}</p>\n<p>SHA1 Hash: {{vars.item.sha1_hash}}</p>\n<p>SHA256 Hash: {{vars.item.sha256_hash}}</p>\n<p>Reporter: {{vars.item.reporter}}</p>\n<p>File Name: {{vars.item.file_name}}</p>\n<p>File Type: {{vars.item.file_type}}</p>\n<p>File Size: {{vars.item.file_size}}</p>\n<p>Origin Country: {{vars.item.origin_country}}</p>",
+                  "threatTypes": []
+                },
+                "_showJson": false,
+                "collection": "/api/ingest-feeds/threat_intel_feeds",
+                "__recommend": [],
+                "step_variables": []
+              },
+              "status": null,
+              "top": "920",
+              "left": "500",
+              "stepType": "/api/3/workflow_step_types/7b221880-716b-4726-a2ca-5e568d330b3e",
+              "group": null,
+              "uuid": "e4361067-0eef-4a57-af99-f3c83bf3a302"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Fetch Indicators",
+              "description": null,
+              "arguments": {
+                "name": "alphaMountain Feed",
+                "config": "test",
+                "params": [],
+                "version": "1.0.0",
+                "connector": "alphamountain-feed",
+                "operation": "get_indicators",
+                "operationTitle": "Get Indicators",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "800",
+              "left": "500",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "group": null,
+              "uuid": "6a97557a-b590-4bf2-97b1-81630cf39817"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Fetch Sample Indicator",
+              "description": null,
+              "arguments": {
+                "name": "alphaMountain Feed",
+                "config": "",
+                "params": {
+                  "selector_type": "Fetch Past 60 Minutes"
+                },
+                "version": "1.0.0",
+                "connector": "alphaMountain-feed",
+                "operation": "get_indicators",
+                "operationTitle": "Get Indicators",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "840",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "group": null,
+              "uuid": "1ebf6f07-0d48-4491-b7aa-7eeafd2f1484"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Get Macro Value",
+              "description": null,
+              "arguments": {
+                "params": {
+                  "iri": "/api/wf/api/dynamic-variable/?name={{vars.pullTimeMacro}}",
+                  "body": "",
+                  "method": "GET"
+                },
+                "version": "3.3.1",
+                "connector": "cyops_utilities",
+                "operation": "make_cyops_request",
+                "operationTitle": "FSR: Make FortiSOAR API Call",
+                "step_variables": []
+              },
+              "status": null,
+              "top": "300",
+              "left": "300",
+              "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+              "group": null,
+              "uuid": "30d5e8f6-846d-44b0-9f2e-7c292c60a08f"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Is data only for mapping",
+              "description": null,
+              "arguments": {
+                "conditions": [
+                  {
+                    "option": "Yes, For Mapping",
+                    "step_iri": "/api/3/workflow_steps/1ebf6f07-0d48-4491-b7aa-7eeafd2f1484",
+                    "condition": "{{ vars.request.env_setup == true }}",
+                    "step_name": "Fetch Sample Indicator"
+                  },
+                  {
+                    "option": "No, For Ingestion",
+                    "default": true,
+                    "step_iri": "/api/3/workflow_steps/7e1bf775-b192-422f-85d0-e8184fdbdd90",
+                    "step_name": "Fetch Indicators"
+                  }
+                ],
+                "step_variables": []
+              },
+              "status": null,
+              "top": "705",
+              "left": "300",
+              "stepType": "/api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+              "group": null,
+              "uuid": "96e452ed-ab81-46b7-b059-3682bd46d26b"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Resolve Range",
+              "description": null,
+              "arguments": {
+                "tlp_resolved": "{{vars.tlp | resolveRange(vars.tlp_map)}}",
+                "reputation_resolved": "{{vars.reputation | resolveRange(vars.reputation_map)}}"
+              },
+              "status": null,
+              "top": "440",
+              "left": "300",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "group": null,
+              "uuid": "d7cf2902-8201-47a8-b377-f933065b9f18"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Return Sample Data",
+              "description": null,
+              "arguments": {
+                "data": "{{vars.steps.Fetch_Sample_Indicator.data.get('data', [])}}",
+                "macro_name": "{{vars.pullTimeMacro}}",
+                "curr_timestamp": "{{vars.curr_timestamp}}"
+              },
+              "status": null,
+              "top": "975",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "group": null,
+              "uuid": "e9fe6b5e-327e-465f-9c64-212fa245e4a1"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Save Result",
+              "description": null,
+              "arguments": {
+                "macro_name": "{{vars.pullTimeMacro}}",
+                "curr_timestamp": "{{vars.curr_timestamp}}"
+              },
+              "status": null,
+              "top": "1040",
+              "left": "500",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "group": null,
+              "uuid": "83c08ccc-4e82-484a-b720-9cdad81c3cfc"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Set Time Configuration",
+              "description": null,
+              "arguments": {
+                "curr_timestamp": "{{arrow.get(arrow.utcnow().int_timestamp).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}}"
+              },
+              "status": null,
+              "top": "570",
+              "left": "300",
+              "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+              "group": null,
+              "uuid": "7a78e51b-0a4b-4262-8521-8cdabcc5ea66"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Start",
+              "description": null,
+              "arguments": {
+                "__triggerLimit": true,
+                "step_variables": {
+                  "input": {
+                    "params": []
+                  },
+                  "pullTimeMacro": "alphaMountainLastIndicatorPullTime_{{vars['audit_info']['cyops_playbook_iri'].split('/')[-1].replace('-','_')}}",
+                  "_configuration_schema": "[\n  {\n    \"title\": \"Specify the last X minutes from which to pull indicators from the alphaMountain feed, based on the specified minutes.\",\n    \"description\": \"Specify the last X minutes from which to pull indicators from the alphaMountain feed, based on the specified minutes.\",\n    \"required\": false,\n    \"editable\": true,\n    \"visible\": true,\n    \"type\": \"text\",\n    \"name\": \"last_x_minutes\",\n    \"tooltip\": \"\"\n  },\n  {\n    \"title\": \"Reputation\",\n    \"name\": \"reputation\",\n    \"type\": \"select\",\n    \"tooltip\": \"Default Reputation to be set for the feeds\",\n    \"required\": true,\n    \"editable\": true,\n    \"visible\": true,\n    \"options\": [\n      \"Good\",\n      \"Suspicious\",\n      \"Malicious\",\n      \"No Reputation Available\",\n      \"TBD\"\n    ],\n    \"value\": \"Good\"\n  },\n  {\n    \"title\": \"TLP\",\n    \"name\": \"tlp\",\n    \"type\": \"select\",\n    \"tooltip\": \"Default TLP to be set for the feeds\",\n    \"required\": true,\n    \"editable\": true,\n    \"visible\": true,\n    \"options\": [\n      \"Red\",\n      \"Amber\",\n      \"Green\",\n      \"White\"\n    ],\n    \"value\": \"White\"\n  },\n  {\n    \"title\": \"Confidence\",\n    \"name\": \"confidence\",\n    \"type\": \"integer\",\n    \"tooltip\": \"Default Confidence score to be set for the feeds\",\n    \"required\": false,\n    \"editable\": true,\n    \"visible\": true,\n    \"value\": 5,\n    \"validation\": {\n      \"minlength\": 0,\n      \"maxlength\": 10\n    }\n  }\n]"
+                },
+                "triggerOnSource": true,
+                "triggerOnReplicate": false
+              },
+              "status": null,
+              "top": "20",
+              "left": "300",
+              "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+              "group": null,
+              "uuid": "044bf43e-cbc7-43be-98c3-b84c930d9a38"
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "Configuration -> Get Macro Value",
+              "targetStep": "/api/3/workflow_steps/30d5e8f6-846d-44b0-9f2e-7c292c60a08f",
+              "sourceStep": "/api/3/workflow_steps/b4dd4d80-c9a2-425b-b1a8-39a29b007fb7",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "cace4011-d5e9-4ec2-b267-d20ab2a12711"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Create Record -> Save Result",
+              "targetStep": "/api/3/workflow_steps/83c08ccc-4e82-484a-b720-9cdad81c3cfc",
+              "sourceStep": "/api/3/workflow_steps/e4361067-0eef-4a57-af99-f3c83bf3a302",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "d3621a72-bbe4-433e-bb25-0dd14f114b48"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Fetch Indicators -> Create Record",
+              "targetStep": "/api/3/workflow_steps/e4361067-0eef-4a57-af99-f3c83bf3a302",
+              "sourceStep": "/api/3/workflow_steps/6a97557a-b590-4bf2-97b1-81630cf39817",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "9eb4fdf4-70cf-412d-a124-d8c83cce3efb"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Fetch Sample Indicator -> Return Sample Data",
+              "targetStep": "/api/3/workflow_steps/e9fe6b5e-327e-465f-9c64-212fa245e4a1",
+              "sourceStep": "/api/3/workflow_steps/1ebf6f07-0d48-4491-b7aa-7eeafd2f1484",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "8db3823b-6bb4-4594-b412-13f51ae8226c"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Get Macro Value -> Resolve Range",
+              "targetStep": "/api/3/workflow_steps/d7cf2902-8201-47a8-b377-f933065b9f18",
+              "sourceStep": "/api/3/workflow_steps/30d5e8f6-846d-44b0-9f2e-7c292c60a08f",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "cbdc34ff-c96a-46f6-8a60-390cfd23e004"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Is data only for mapping -> Fetch Indicators",
+              "targetStep": "/api/3/workflow_steps/6a97557a-b590-4bf2-97b1-81630cf39817",
+              "sourceStep": "/api/3/workflow_steps/96e452ed-ab81-46b7-b059-3682bd46d26b",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "34785240-e64d-4ff4-99c0-3df90e97c78a"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Is data only for mapping -> Fetch Sample Indicator",
+              "targetStep": "/api/3/workflow_steps/1ebf6f07-0d48-4491-b7aa-7eeafd2f1484",
+              "sourceStep": "/api/3/workflow_steps/96e452ed-ab81-46b7-b059-3682bd46d26b",
+              "label": "Yes, For Mapping",
+              "isExecuted": false,
+              "group": null,
+              "uuid": "ceaa9da5-1afa-40d4-a80a-81650f9e9fb9"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Resolve Range -> Set Time Configuration",
+              "targetStep": "/api/3/workflow_steps/7a78e51b-0a4b-4262-8521-8cdabcc5ea66",
+              "sourceStep": "/api/3/workflow_steps/d7cf2902-8201-47a8-b377-f933065b9f18",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "609baa6c-2bd7-4543-911c-0507d06cb82c"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Set Time Configuration -> Is data only for mapping",
+              "targetStep": "/api/3/workflow_steps/96e452ed-ab81-46b7-b059-3682bd46d26b",
+              "sourceStep": "/api/3/workflow_steps/7a78e51b-0a4b-4262-8521-8cdabcc5ea66",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "d63f00c0-39e7-4a70-9177-9038f65b6fb3"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Start -> Configuration",
+              "targetStep": "/api/3/workflow_steps/b4dd4d80-c9a2-425b-b1a8-39a29b007fb7",
+              "sourceStep": "/api/3/workflow_steps/044bf43e-cbc7-43be-98c3-b84c930d9a38",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "5d175025-bbbb-414b-864b-bdad4746c1c5"
+            }
+          ],
+          "groups": [],
+          "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+          "uuid": "293e5390-c2bd-4a9f-a265-f7de6eb4bd76",
+          "id": 6134,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
+          "recordTags": [
+            "dataingestion",
+            "create",
+            "fetch",
+            "alphamountain-feed"
+          ]
+        },
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "alphaMountain Feed > Ingest",
+          "aliasName": null,
+          "tag": null,
+          "description": "Fetch Indicators from alphaMountain Feed",
+          "isActive": false,
+          "debug": false,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [],
+          "synchronous": false,
+          "lastModifyDate": 1721130073,
+          "collection": "/api/3/workflow_collections/136023c2-bf56-4463-98b5-ad4df21d3ed7",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/a1072233-490b-4e5b-98ba-4e24252921ec",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "List Indicators",
+              "description": null,
+              "arguments": {
+                "arguments": [],
+                "apply_async": false,
+                "step_variables": [],
+                "pass_parent_env": false,
+                "pass_input_record": false,
+                "workflowReference": "/api/3/workflows/293e5390-c2bd-4a9f-a265-f7de6eb4bd76"
+              },
+              "status": null,
+              "top": "165",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/74932bdc-b8b6-4d24-88c4-1a4dfbc524f3",
+              "group": null,
+              "uuid": "cc642457-25a1-435e-8d7a-522f7a59a5cc"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Start",
+              "description": null,
+              "arguments": {
+                "route": "055b834a-c399-4247-904c-b9654602c301",
+                "title": "alphaMountain Feed > Ingest",
+                "resources": [
+                  "alerts"
+                ],
+                "__triggerLimit": true,
+                "inputVariables": [],
+                "step_variables": {
+                  "input": {
+                    "params": [],
+                    "records": "{{vars.input.records}}"
+                  }
+                },
+                "triggerOnSource": true,
+                "executeButtonText": "Execute",
+                "noRecordExecution": true,
+                "showToasterMessage": {
+                  "visible": false,
+                  "messageVisible": true
+                },
+                "triggerOnReplicate": false,
+                "singleRecordExecution": false
+              },
+              "status": null,
+              "top": "30",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/f414d039-bb0d-4e59-9c39-a8f1e880b18a",
+              "group": null,
+              "uuid": "a1072233-490b-4e5b-98ba-4e24252921ec"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Update Pull Time",
+              "description": null,
+              "arguments": {
+                "params": {
+                  "macro": "{{vars.steps.List_Indicators.macro_name}}",
+                  "value": "{{vars.steps.List_Indicators.curr_timestamp}}"
+                },
+                "version": "3.2.5",
+                "connector": "cyops_utilities",
+                "operation": "updatemacro",
+                "operationTitle": "FSR: Create/Update Global Variables",
+                "step_variables": []
+              },
+              "status": null,
+              "top": "300",
+              "left": "125",
+              "stepType": "/api/3/workflow_step_types/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+              "group": null,
+              "uuid": "c6782007-9808-474a-95e1-ece6c791a84f"
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "List Indicators -> Update Pull Time",
+              "targetStep": "/api/3/workflow_steps/c6782007-9808-474a-95e1-ece6c791a84f",
+              "sourceStep": "/api/3/workflow_steps/cc642457-25a1-435e-8d7a-522f7a59a5cc",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "ed27665e-ae61-47c6-b13c-91e139fddebb"
+            },
+            {
+              "@type": "WorkflowRoute",
+              "name": "Start -> List Indicators",
+              "targetStep": "/api/3/workflow_steps/cc642457-25a1-435e-8d7a-522f7a59a5cc",
+              "sourceStep": "/api/3/workflow_steps/a1072233-490b-4e5b-98ba-4e24252921ec",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "dc461d34-69cf-493b-882c-596b7b951bee"
+            }
+          ],
+          "groups": [],
+          "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+          "uuid": "9284b4b8-0f2d-4fda-905b-69aad58f749b",
+          "id": 6133,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
+          "recordTags": [
+            "dataingestion",
+            "ingest",
+            "alphamountain-feed"
+          ]
+        },
+        {
+          "@type": "Workflow",
+          "triggerLimit": null,
+          "name": "Get Indicators",
+          "aliasName": null,
+          "tag": "#alphaMountain Feed",
+          "description": "Retrieves a list of all indicators from alphaMountain Feed. You can also filter the indicators retrieved from alphaMountain Feed based on the filter you have specified",
+          "isActive": false,
+          "debug": false,
+          "singleRecordExecution": false,
+          "remoteExecutableFlag": false,
+          "parameters": [],
+          "synchronous": false,
+          "lastModifyDate": 1721129978,
+          "collection": "/api/3/workflow_collections/136023c2-bf56-4463-98b5-ad4df21d3ed7",
+          "versions": [],
+          "triggerStep": "/api/3/workflow_steps/75984d0c-0002-41b1-ada3-bc6ac19d9e3b",
+          "steps": [
+            {
+              "@type": "WorkflowStep",
+              "name": "Get Indicators",
+              "description": null,
+              "arguments": {
+                "name": "alphaMountain Feed",
+                "config": "test",
+                "params": {
+                  "flags": "",
+                  "limit": "",
+                  "start": "",
+                  "risk_min": "",
+                  "categories": false,
+                  "popularity": false
+                },
+                "version": "1.0.0",
+                "connector": "alphamountain-feed",
+                "operation": "get_indicators",
+                "operationTitle": "Get Indicators",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "110",
+              "left": "331",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "group": null,
+              "uuid": "1a5c63e3-9fc1-422c-a99e-75bafba7c76b"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Start",
+              "description": null,
+              "arguments": {
+                "step_variables": {
+                  "input": {
+                    "params": []
+                  }
+                }
+              },
+              "status": null,
+              "top": "20",
+              "left": "20",
+              "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+              "group": null,
+              "uuid": "75984d0c-0002-41b1-ada3-bc6ac19d9e3b"
+            }
+          ],
+          "routes": [
+            {
+              "@type": "WorkflowRoute",
+              "name": "Start -> Get Indicators",
+              "targetStep": "/api/3/workflow_steps/1a5c63e3-9fc1-422c-a99e-75bafba7c76b",
+              "sourceStep": "/api/3/workflow_steps/75984d0c-0002-41b1-ada3-bc6ac19d9e3b",
+              "label": null,
+              "isExecuted": false,
+              "group": null,
+              "uuid": "d6f84263-a2af-4db2-a991-2a64ade1ee00"
+            }
+          ],
+          "groups": [],
+          "priority": null,
+          "uuid": "c0773488-1c85-49c3-892b-58eec86e0b49",
+          "id": 6135,
+          "owners": [],
+          "isPrivate": false,
+          "deletedAt": null,
+          "importedBy": [],
+          "recordTags": [
+            "alphamountain-feed"
+          ]
+        }
+      ]
+    }
+  ],
+  "exported_tags": [
+    "alphamountain",
+    "dataingestion",
+    "create",
+    "fetch",
+    "alphamountain-feed",
+    "ingest"
+  ]
+}
