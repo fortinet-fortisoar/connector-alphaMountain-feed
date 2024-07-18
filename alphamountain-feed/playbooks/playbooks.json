@@ -4,11 +4,11 @@
     {
       "@type": "WorkflowCollection",
       "name": "Sample - alphaMountain Feed - 1.0.0",
-      "description": "Sample playbooks for \"alphaMountain\" connector. If you are planning to use any of the sample playbooks in your environment, ensure that you clone those playbooks and move them to a different collection, since the sample playbook collection gets deleted during connector upgrade and delete.",
+      "description": "Sample playbooks for \"alphaMountain Feed\" connector. If you are planning to use any of the sample playbooks in your environment, ensure that you clone those playbooks and move them to a different collection, since the sample playbook collection gets deleted during connector upgrade and delete.",
       "visible": true,
-      "image": null,
+      "image": "",
       "uuid": "136023c2-bf56-4463-98b5-ad4df21d3ed7",
-      "id": 523,
+      "id": 146,
       "deletedAt": null,
       "importedBy": [],
       "recordTags": [
@@ -28,7 +28,7 @@
           "remoteExecutableFlag": false,
           "parameters": [],
           "synchronous": false,
-          "lastModifyDate": 1721131235,
+          "lastModifyDate": 1721324049,
           "collection": "/api/3/workflow_collections/136023c2-bf56-4463-98b5-ad4df21d3ed7",
           "versions": [],
           "triggerStep": "/api/3/workflow_steps/044bf43e-cbc7-43be-98c3-b84c930d9a38",
@@ -50,7 +50,7 @@
                 "threat_intel_feeds_typeOfFeed_map": "{}"
               },
               "status": null,
-              "top": "160",
+              "top": "165",
               "left": "300",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "group": null,
@@ -62,7 +62,7 @@
               "description": null,
               "arguments": {
                 "for_each": {
-                  "item": "{{vars.steps.Fetch_Indicators.data.get('data', [])}}",
+                  "item": "{{vars.steps.Fetch_Sample_Data.data.get('feed',[])}}",
                   "__bulk": true,
                   "parallel": false,
                   "condition": "",
@@ -70,17 +70,16 @@
                 },
                 "resource": {
                   "tLP": "{{vars.tlp_resolved}}",
-                  "value": "{{vars.item.file_name}} : {{vars.item.sha256_hash}}",
+                  "value": "{{vars.item.url}}",
                   "source": "alphaMountain Feed",
-                  "lastSeen": "{{arrow.get(vars.item[\"last_seen\"]).int_timestamp if vars.item[\"last_seen\"] else None}}",
-                  "sourceId": "{{vars.item.sha256_hash}}",
+                  "sourceId": "{{vars.item.hostname}}",
                   "__replace": "",
-                  "confidence": "{% if vars.confidence %}{{ vars.confidence }}{% else %}None{% endif %}",
-                  "recordTags": "{{vars.item.tags}}",
+                  "confidence": "{%if vars.item.confidence %} {{vars.item.confidence |int}} {%else%}None{% endif %}",
+                  "recordTags": "{{vars.item.categories}}",
                   "reputation": "{{vars.reputation_resolved}}",
                   "sourceData": "{{vars.item | toJSON}}",
-                  "typeOfFeed": "/api/3/picklists/8c88bc82-c803-4cba-9997-4d734123493b",
-                  "description": "<p>A Locality Sensitive Hash (TLSH): {{vars.item.tlsh}}</p>\n<p>SSDEEP Hash: {{vars.item.ssdeep}}</p>\n<p>MD5 Hash: {{vars.item.md5_hash}}</p>\n<p>SHA1 Hash: {{vars.item.sha1_hash}}</p>\n<p>SHA256 Hash: {{vars.item.sha256_hash}}</p>\n<p>Reporter: {{vars.item.reporter}}</p>\n<p>File Name: {{vars.item.file_name}}</p>\n<p>File Type: {{vars.item.file_type}}</p>\n<p>File Size: {{vars.item.file_size}}</p>\n<p>Origin Country: {{vars.item.origin_country}}</p>",
+                  "typeOfFeed": "/api/3/picklists/76b68a66-ffaa-4003-b60d-a43fcc64c003",
+                  "description": "<p>URL: {{vars.item.url}}</p>\n<p>Hostname: {{vars.item.hostname}}</p>\n<p>Threat Score: {{vars.item.score}}</p>\n<p>Indicator Confidence: {{vars.item.confidence}}</p>\n<p>Indicator Popularity: {{vars.item.rank}}</p>",
                   "threatTypes": []
                 },
                 "_showJson": false,
@@ -89,8 +88,8 @@
                 "step_variables": []
               },
               "status": null,
-              "top": "920",
-              "left": "500",
+              "top": "980",
+              "left": "120",
               "stepType": "/api/3/workflow_step_types/7b221880-716b-4726-a2ca-5e568d330b3e",
               "group": null,
               "uuid": "e4361067-0eef-4a57-af99-f3c83bf3a302"
@@ -102,44 +101,61 @@
               "arguments": {
                 "name": "alphaMountain Feed",
                 "config": "test",
-                "params": [],
+                "params": {
+                  "flags": "",
+                  "limit": "",
+                  "start": "{{vars.start_time}}",
+                  "risk_min": "",
+                  "categories": "",
+                  "include_categories": true,
+                  "include_popularity": true
+                },
                 "version": "1.0.0",
                 "connector": "alphamountain-feed",
                 "operation": "get_indicators",
-                "operationTitle": "Get Indicators",
-                "pickFromTenant": false,
-                "step_variables": []
-              },
-              "status": null,
-              "top": "800",
-              "left": "500",
-              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
-              "group": null,
-              "uuid": "6a97557a-b590-4bf2-97b1-81630cf39817"
-            },
-            {
-              "@type": "WorkflowStep",
-              "name": "Fetch Sample Indicator",
-              "description": null,
-              "arguments": {
-                "name": "alphaMountain Feed",
-                "config": "",
-                "params": {
-                  "selector_type": "Fetch Past 60 Minutes"
-                },
-                "version": "1.0.0",
-                "connector": "alphaMountain-feed",
-                "operation": "get_indicators",
+                "mock_result": "[\n        {\n            \"url\": \"http://google.com/\",\n            \"hostname\": \"test.com\",\n            \"score\": 1.84,\n            \"categories\": [\n                \"Information Technology\",\n                \"Unrated\",\n                \"Audio\",\n                \"Brokerage/Trading\"\n            ],\n            \"confidence\": 0.8644,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://google1.com/\",\n            \"hostname\": \"test1.com\",\n            \"score\": 1.84,\n            \"categories\": [\n                \"Information Technology\",\n                \"Business/Economy\"\n            ],\n            \"confidence\": 0.8644,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://google2.com/\",\n            \"hostname\": \"test2.com\",\n            \"score\": 1.84,\n            \"categories\": [\n                \"Information Technology\",\n                \"Shopping\"\n            ],\n            \"confidence\": 0.8644,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://google3.com/\",\n            \"hostname\": \"test3.com\",\n            \"score\": 1.84,\n            \"categories\": [\n                \"Adult/Mature\",\n                \"Vehicles\"\n            ],\n            \"confidence\": 0.8644,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://google4.com/\",\n            \"hostname\": \"test4.com\",\n            \"score\": 1.84,\n            \"categories\": [\n                \"Unrated\",\n                \"Abortion\",\n                \"Ads/Analytics\"\n            ],\n            \"confidence\": 0.8644,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://google5.com/\",\n            \"hostname\": \"test5.com\",\n            \"score\": 1.84,\n            \"categories\": [\n                \"Adult/Mature\"\n            ],\n            \"confidence\": 0.8644,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://google6.com/\",\n            \"hostname\": \"test6.com\",\n            \"score\": 1.84,\n            \"categories\": [\n                \"Alcohol\"\n            ],\n            \"confidence\": 0.8644,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://google7.com/\",\n            \"hostname\": \"test7.com\",\n            \"score\": 1.84,\n            \"rank\": 1\n        },\n        {\n            \"url\": \"http://test.com/\",\n            \"hostname\": \"test123.com\",\n            \"score\": 1.84\n        },\n        {\n            \"url\": \"http://test1.com/\",\n            \"hostname\": \"test1213.com\",\n            \"score\": 1.84\n        },\n        {\n            \"url\": \"http://test2.com/\",\n            \"hostname\": \"tesrt.com\",\n            \"score\": 1.84\n        }\n    ]",
+                "ignore_errors": true,
                 "operationTitle": "Get Indicators",
                 "pickFromTenant": false,
                 "step_variables": []
               },
               "status": null,
               "top": "840",
-              "left": "125",
+              "left": "120",
               "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
               "group": null,
-              "uuid": "1ebf6f07-0d48-4491-b7aa-7eeafd2f1484"
+              "uuid": "6a97557a-b590-4bf2-97b1-81630cf39817"
+            },
+            {
+              "@type": "WorkflowStep",
+              "name": "Fetch Sample Data",
+              "description": null,
+              "arguments": {
+                "name": "alphaMountain Feed",
+                "config": "test",
+                "params": {
+                  "flags": "",
+                  "limit": "",
+                  "start": "{{vars.start_time}}",
+                  "risk_min": "",
+                  "categories": "",
+                  "include_categories": true,
+                  "include_popularity": true
+                },
+                "version": "1.0.0",
+                "connector": "alphamountain-feed",
+                "operation": "get_indicators",
+                "ignore_errors": false,
+                "operationTitle": "Get Indicators",
+                "pickFromTenant": false,
+                "step_variables": []
+              },
+              "status": null,
+              "top": "840",
+              "left": "480",
+              "stepType": "/api/3/workflow_step_types/0bfed618-0316-11e7-93ae-92361f002671",
+              "group": null,
+              "uuid": "c08b1a92-03af-411f-9519-762732ecc921"
             },
             {
               "@type": "WorkflowStep",
@@ -172,21 +188,21 @@
                 "conditions": [
                   {
                     "option": "Yes, For Mapping",
-                    "step_iri": "/api/3/workflow_steps/1ebf6f07-0d48-4491-b7aa-7eeafd2f1484",
+                    "step_iri": "/api/3/workflow_steps/c08b1a92-03af-411f-9519-762732ecc921",
                     "condition": "{{ vars.request.env_setup == true }}",
-                    "step_name": "Fetch Sample Indicator"
+                    "step_name": "Fetch Sample Data"
                   },
                   {
                     "option": "No, For Ingestion",
                     "default": true,
-                    "step_iri": "/api/3/workflow_steps/7e1bf775-b192-422f-85d0-e8184fdbdd90",
+                    "step_iri": "/api/3/workflow_steps/6a97557a-b590-4bf2-97b1-81630cf39817",
                     "step_name": "Fetch Indicators"
                   }
                 ],
                 "step_variables": []
               },
               "status": null,
-              "top": "705",
+              "top": "700",
               "left": "300",
               "stepType": "/api/3/workflow_step_types/12254cf5-5db7-4b1a-8cb1-3af081924b28",
               "group": null,
@@ -201,7 +217,7 @@
                 "reputation_resolved": "{{vars.reputation | resolveRange(vars.reputation_map)}}"
               },
               "status": null,
-              "top": "440",
+              "top": "435",
               "left": "300",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "group": null,
@@ -212,13 +228,13 @@
               "name": "Return Sample Data",
               "description": null,
               "arguments": {
-                "data": "{{vars.steps.Fetch_Sample_Indicator.data.get('data', [])}}",
+                "data": "{{vars.steps.Fetch_Sample_Data.data.get('feed',[])}}",
                 "macro_name": "{{vars.pullTimeMacro}}",
                 "curr_timestamp": "{{vars.curr_timestamp}}"
               },
               "status": null,
-              "top": "975",
-              "left": "125",
+              "top": "980",
+              "left": "480",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "group": null,
               "uuid": "e9fe6b5e-327e-465f-9c64-212fa245e4a1"
@@ -232,8 +248,8 @@
                 "curr_timestamp": "{{vars.curr_timestamp}}"
               },
               "status": null,
-              "top": "1040",
-              "left": "500",
+              "top": "1110",
+              "left": "125",
               "stepType": "/api/3/workflow_step_types/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
               "group": null,
               "uuid": "83c08ccc-4e82-484a-b720-9cdad81c3cfc"
@@ -243,6 +259,7 @@
               "name": "Set Time Configuration",
               "description": null,
               "arguments": {
+                "start_time": "{%if vars.request.env_setup %}{{arrow.get(arrow.utcnow().shift(minutes=-vars.last_x_minutes).int_timestamp).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}}{%elif vars.steps.Get_Macro_Value.data['hydra:member']  | length > 0%}{{vars.steps.Get_Macro_Value.data['hydra:member'][0].value}}{%else%}{{arrow.get(arrow.utcnow().shift(minutes=-vars.last_x_minutes).int_timestamp).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}}{% endif %}",
                 "curr_timestamp": "{{arrow.get(arrow.utcnow().int_timestamp).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}}"
               },
               "status": null,
@@ -269,7 +286,7 @@
                 "triggerOnReplicate": false
               },
               "status": null,
-              "top": "20",
+              "top": "30",
               "left": "300",
               "stepType": "/api/3/workflow_step_types/b348f017-9a94-471f-87f8-ce88b6a7ad62",
               "group": null,
@@ -309,13 +326,13 @@
             },
             {
               "@type": "WorkflowRoute",
-              "name": "Fetch Sample Indicator -> Return Sample Data",
+              "name": "Fetch Sample Data -> Return Sample Data",
               "targetStep": "/api/3/workflow_steps/e9fe6b5e-327e-465f-9c64-212fa245e4a1",
-              "sourceStep": "/api/3/workflow_steps/1ebf6f07-0d48-4491-b7aa-7eeafd2f1484",
+              "sourceStep": "/api/3/workflow_steps/c08b1a92-03af-411f-9519-762732ecc921",
               "label": null,
               "isExecuted": false,
               "group": null,
-              "uuid": "8db3823b-6bb4-4594-b412-13f51ae8226c"
+              "uuid": "7a8d951e-519c-4cc9-9f65-353862570840"
             },
             {
               "@type": "WorkflowRoute",
@@ -332,20 +349,20 @@
               "name": "Is data only for mapping -> Fetch Indicators",
               "targetStep": "/api/3/workflow_steps/6a97557a-b590-4bf2-97b1-81630cf39817",
               "sourceStep": "/api/3/workflow_steps/96e452ed-ab81-46b7-b059-3682bd46d26b",
-              "label": null,
+              "label": "No, For Ingestion",
               "isExecuted": false,
               "group": null,
               "uuid": "34785240-e64d-4ff4-99c0-3df90e97c78a"
             },
             {
               "@type": "WorkflowRoute",
-              "name": "Is data only for mapping -> Fetch Sample Indicator",
-              "targetStep": "/api/3/workflow_steps/1ebf6f07-0d48-4491-b7aa-7eeafd2f1484",
+              "name": "Is data only for mapping -> Fetch Sample Data",
+              "targetStep": "/api/3/workflow_steps/c08b1a92-03af-411f-9519-762732ecc921",
               "sourceStep": "/api/3/workflow_steps/96e452ed-ab81-46b7-b059-3682bd46d26b",
               "label": "Yes, For Mapping",
               "isExecuted": false,
               "group": null,
-              "uuid": "ceaa9da5-1afa-40d4-a80a-81650f9e9fb9"
+              "uuid": "de3412f9-5bfb-4e7d-8e06-9dc3f7f56645"
             },
             {
               "@type": "WorkflowRoute",
@@ -381,16 +398,16 @@
           "groups": [],
           "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
           "uuid": "293e5390-c2bd-4a9f-a265-f7de6eb4bd76",
-          "id": 6134,
+          "id": 1908,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
           "recordTags": [
-            "dataingestion",
+            "alphamountain-feed",
             "create",
-            "fetch",
-            "alphamountain-feed"
+            "dataingestion",
+            "fetch"
           ]
         },
         {
@@ -513,15 +530,15 @@
           "groups": [],
           "priority": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
           "uuid": "9284b4b8-0f2d-4fda-905b-69aad58f749b",
-          "id": 6133,
+          "id": 1909,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
           "importedBy": [],
           "recordTags": [
+            "alphamountain-feed",
             "dataingestion",
-            "ingest",
-            "alphamountain-feed"
+            "ingest"
           ]
         },
         {
@@ -605,7 +622,7 @@
           "groups": [],
           "priority": null,
           "uuid": "c0773488-1c85-49c3-892b-58eec86e0b49",
-          "id": 6135,
+          "id": 1910,
           "owners": [],
           "isPrivate": false,
           "deletedAt": null,
@@ -619,10 +636,10 @@
   ],
   "exported_tags": [
     "alphamountain",
-    "dataingestion",
-    "create",
-    "fetch",
     "alphamountain-feed",
+    "create",
+    "dataingestion",
+    "fetch",
     "ingest"
   ]
 }

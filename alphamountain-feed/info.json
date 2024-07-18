@@ -39,7 +39,7 @@
       {
         "title": "API Key",
         "name": "api_key",
-        "type": "text",
+        "type": "password",
         "tooltip": "Specify the API key to access the alphaMountain Rest API feed endpoint to which you will connect and perform the automated operations.",
         "description": "Specify the API key to access the alphaMountain Rest API feed endpoint to which you will connect and perform the automated operations.",
         "required": false,
