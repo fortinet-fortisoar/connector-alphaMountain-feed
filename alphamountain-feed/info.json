@@ -9,7 +9,7 @@
   "publisher": "Fortinet",
   "icon_small_name": "small.png",
   "icon_large_name": "large.png",
-  "help_online": "",
+  "help_online": "https://github.com/fortinet-fortisoar/connector-alphamountain-feed/blob/release/1.0.0/docs/alphamountain-feed.md",
   "ingestion_supported": true,
   "ingestion_modes": [
     "scheduled"
@@ -42,7 +42,7 @@
         "type": "password",
         "tooltip": "Specify the API key to access the alphaMountain Rest API feed endpoint to which you will connect and perform the automated operations.",
         "description": "Specify the API key to access the alphaMountain Rest API feed endpoint to which you will connect and perform the automated operations.",
-        "required": false,
+        "required": true,
         "visible": true,
         "editable": true
       },
@@ -66,7 +66,16 @@
       "description": "Retrieves a list of all indicators from alphaMountain Feed. You can also filter the indicators retrieved from alphaMountain Feed based on the filter you have specified",
       "category": "investigation",
       "annotation": "get_indicators",
-      "output_schema": {},
+      "output_schema": [
+        {
+          "url": "",
+          "hostname": "",
+          "score": "",
+          "categories": [],
+          "confidence": "",
+          "rank": ""
+        }
+      ],
       "parameters": [
         {
           "title": "Start Date",
