@@ -173,5 +173,6 @@ def _check_health(config):
 
 
 operations = {
-    'get_indicators': get_indicators
+    'get_indicators': get_indicators,
+    'get_available_category':get_available_category
 }
