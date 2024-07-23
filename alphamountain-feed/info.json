@@ -29,7 +29,7 @@
         "title": "Server URL",
         "name": "server_url",
         "type": "text",
-        "description": "Specify the Rest API feed endpoint URL of the alphaMountain server to connect and perform automated operations.",
+        "description": "Specify the REST API feed endpoint URL of the alphaMountain server to connect and perform automated operations. Use the following server URL: https://batch.alphamountain.ai",
         "tooltip": "Specify the Rest API feed endpoint URL of the alphaMountain server to connect and perform automated operations.",
         "required": true,
         "visible": true,

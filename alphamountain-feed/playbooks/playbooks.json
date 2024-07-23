@@ -12,7 +12,8 @@
       "deletedAt": null,
       "importedBy": [],
       "recordTags": [
-        "alphamountain"
+        "alphaMountain",
+        "alphamountain-feed"
       ],
       "workflows": [
         {
@@ -100,7 +101,7 @@
               "description": null,
               "arguments": {
                 "name": "alphaMountain Feed",
-                "config": "test",
+                "config": "",
                 "params": {
                   "flags": "",
                   "limit": "",
@@ -132,7 +133,7 @@
               "description": null,
               "arguments": {
                 "name": "alphaMountain Feed",
-                "config": "test",
+                "config": "",
                 "params": {
                   "flags": "",
                   "limit": "",
@@ -565,7 +566,7 @@
               "description": null,
               "arguments": {
                 "name": "alphaMountain Feed",
-                "config": "test",
+                "config": "",
                 "params": {
                   "flags": "",
                   "limit": "",
@@ -635,7 +636,7 @@
     }
   ],
   "exported_tags": [
-    "alphamountain",
+    "alphaMountain",
     "alphamountain-feed",
     "create",
     "dataingestion",

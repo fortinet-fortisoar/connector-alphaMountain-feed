@@ -25,7 +25,7 @@ Certified: No
 For the procedure to configure a connector, click [here](https://docs.fortinet.com/document/fortisoar/0.0.0/configuring-a-connector/1/configuring-a-connector)
 ### Configuration parameters
 <p>In FortiSOAR&trade;, on the Connectors page, click the <strong>alphaMountain Feed</strong> connector row (if you are in the <strong>Grid</strong> view on the Connectors page) and in the <strong>Configurations</strong> tab enter the required configuration details:</p>
-<table border=1><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td>Server URL</td><td>Specify the Rest API feed endpoint URL of the alphaMountain server to connect and perform automated operations.</td>
+<table border=1><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td>Server URL</td><td>Specify the REST API feed endpoint URL of the alphaMountain server to connect and perform automated operations. Use the following server URL: https://batch.alphamountain.ai </td>
 </tr><tr><td>API Key</td><td>Specify the API key to access the alphaMountain Rest API feed endpoint to which you will connect and perform the automated operations.</td>
 </tr><tr><td>Verify SSL</td><td>Specifies whether the SSL certificate for the server is to be verified or not. <br/>By default, this option is set to True.</td></tr>
 </tbody></table>
