@@ -156,12 +156,14 @@ def get_indicators(config, params):
             categories_ids = get_category_ids(categories)
             params['categories'] = categories_ids
         indicator_feed_categories = get_indicator_category(params, alpha_feed)
-        indicator_feeds = build_response(indicator_feeds, indicator_feed_categories)
+        if indicator_feed_categories:
+            indicator_feeds = build_response(indicator_feeds, indicator_feed_categories)
     if include_popularity:
         categories = params.pop('categories', '')
         flags = params.pop('flags', '')
         feed_indicator_popularity = get_indicator_popularity(params, alpha_feed)
-        indicator_feeds = build_response(indicator_feeds, feed_indicator_popularity)
+        if feed_indicator_popularity:
+            indicator_feeds = build_response(indicator_feeds, feed_indicator_popularity)
     resp['feed'] = indicator_feeds
     return resp
 
